@@ -27,5 +27,9 @@ public class ROSServiceChannel extends ROSCommunicationChannel{
         }
         //return "rs";
         return "";
-        };
+        }
+
+    public int hashCode() {
+        return getID().hashCode() + isSystem().hashCode();
     }
+}

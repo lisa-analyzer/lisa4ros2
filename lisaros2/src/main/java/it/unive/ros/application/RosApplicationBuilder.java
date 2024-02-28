@@ -108,7 +108,6 @@ public class RosApplicationBuilder {
 						}
 					}
 					fileManagerLiSAField.setAccessible(false);
-					var x = 3;
 				} catch (Exception e) {
 					System.out.println("[ERR] " + e.getMessage());
 					throw new ROSApplicationBuildException(e);
@@ -118,7 +117,7 @@ public class RosApplicationBuilder {
 		} catch (Exception e) {
 			throw new ROSApplicationBuildException(e);
 		}
-		return new ROSApplication(rosGraphDumper.getRosGraph(), permissionsGrants, rosGraphDumper.getNetwork(), lisaOutputs, 0, workDir);
+		return new ROSApplication(rosGraphDumper.getRosGraph(), permissionsGrants, rosGraphDumper.getNetwork(), lisaOutputs, loc, workDir);
 	}
 
 	protected LiSAConfiguration getLiSAConfiguration() {

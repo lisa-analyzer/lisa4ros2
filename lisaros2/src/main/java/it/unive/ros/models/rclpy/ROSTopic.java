@@ -46,4 +46,34 @@ public class ROSTopic extends ROSCommunicationChannel {
             default -> "rt";
         };
 	}
+
+	@Override
+	public int hashCode() {
+		return getID().hashCode() + getTopicType().hashCode() + isSystem().hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+
+		if (obj.getClass() != this.getClass()) {
+			return false;
+		}
+
+		final ROSTopic other = (ROSTopic) obj;
+		if (!this.getID().equals(other.getID())) {
+			return false;
+		}
+
+		if (!this.getDDSPrefix().equals(other.getDDSPrefix())) {
+			return false;
+		}
+
+		if (!this.getTopicType().equals(other.getTopicType())) {
+			return false;
+		}
+		return true;
+	}
 }

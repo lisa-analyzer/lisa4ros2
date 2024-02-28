@@ -61,6 +61,12 @@ public class ROSNetwork extends Network<ROSNode, ROSNetworkEntity<? extends ROSC
 
     }
 
+    @Override
+    public void addNetworkChannel(ROSCommunicationChannel channel) throws Exception {
+
+        this.getNetworkChannels().add(channel);
+    }
+
     public ROSTopic getTopic(String topicName) {
         for (ROSCommunicationChannel channel : getNetworkChannels()) {
             if (channel instanceof ROSTopic && channel.getID().equals(topicName)) {
@@ -97,87 +103,6 @@ public class ROSNetwork extends Network<ROSNode, ROSNetworkEntity<? extends ROSC
             }
         }
         return null;
-    }
-    public String toMermaid() {
-        StringBuilder mermaid = new StringBuilder(
-                "graph TD\n");
-        // Nodes
-        for (ROSNode n : getNetworkEntityContainers()) {
-            mermaid.append(n.getURI()).append(":::wide\n");
-            mermaid.append("style ").append(n.getURI()).append(" fill:limegreen,stroke:#333,stroke-width:2px\n");
-        }
-
-        // Topic
-        for (ROSTopic t : this.getTopics()) {
-            if (!t.isSystem()) {
-                if (this.getChannelUserContainers(t).isEmpty()) {
-                    mermaid.append(t.getName()).append("[/").append(t.getName()).append("/]:::wide\n");
-                    mermaid.append("style ").append(t.getName()).append(" fill:gold,stroke:#333,stroke-width:2px\n");
-                } else {
-                    mermaid.append(t.getName()).append("[/").append(t.getName()).append("/]:::wide\n");
-                    mermaid.append("style ").append(t.getName()).append(" fill:gold,stroke:#333,stroke-width:2px\n");
-                }
-            }
-        }
-        for (ROSServiceChannel s : this.getServices()) {
-            if (!s.isSystem()) {
-                if (this.getChannelUserContainers(s).isEmpty()) {
-                    mermaid.append(s.getName()).append("[/").append(s.getName()).append("/]:::wide\n");
-                    mermaid.append("style ").append(s.getName()).append(" fill:lightskyblue,stroke:#333,stroke-width:2px\n");
-                } else {
-                    mermaid.append(s.getName()).append("[/").append(s.getName()).append("/]:::wide\n");
-                    mermaid.append("style ").append(s.getName()).append(" fill:lightskyblue,stroke:#333,stroke-width:2px\n");
-                }
-            }
-        }
-
-        for (ROSActionChannel s : this.getActions()) {
-            if (!s.isSystem()) {
-                if (this.getChannelUserContainers(s).isEmpty()) {
-                    mermaid.append(s.getName()).append("[/").append(s.getName()).append("/]:::wide\n");
-                    mermaid.append("style ").append(s.getName()).append(" fill:orchid1,stroke:#333,stroke-width:2px\n");
-                } else {
-                    mermaid.append(s.getName()).append("[/").append(s.getName()).append("/]:::wide\n");
-                    mermaid.append("style ").append(s.getName()).append(" fill:orchid1,stroke:#333,stroke-width:2px\n");
-                }
-            }
-        }
-
-        // Publishers and Subscribers
-        for (ROSNode n : getNetworkEntityContainers()) {
-            for (ROSTopicPublisher p : n.getPublishers()) {
-                if (!p.getChannel().isSystem()) {
-                    mermaid.append(n.getURI()).append(" --> ").append(p.getChannel().getName()).append("\n");
-                }
-            }
-            for (ROSTopicSubscription s : n.getSubscribers()) {
-                if (!s.getChannel().isSystem()) {
-                    mermaid.append(s.getChannel().getName()).append(" --> ").append(n.getURI()).append("\n");
-                }
-            }
-            for (ROSServiceServer ss : n.getServiceServers()) {
-                if (!ss.getChannel().isSystem()) {
-                    mermaid.append(ss.getChannel().getName()).append(" --> ").append(n.getURI()).append("\n");
-                }
-            }
-            for (ROSServiceClient sc : n.getServiceClients()) {
-                if (!sc.getChannel().isSystem()) {
-                    mermaid.append(n.getURI()).append(" --> ").append(sc.getChannel().getName()).append("\n");
-                }
-            }
-            for (ROSActionServer as : n.getActionServers()) {
-                if (!as.getChannel().isSystem()) {
-                    mermaid.append(as.getChannel().getName()).append(" --> ").append(n.getURI()).append("\n");
-                }
-            }
-            for (ROSActionClient ac : n.getActionClients()) {
-                if (!ac.getChannel().isSystem()) {
-                    mermaid.append(n.getURI()).append(" --> ").append(ac.getChannel().getName()).append("\n");
-                }
-            }
-        }
-        mermaid.append("classDef wide padding:50px\n");
-        return mermaid.toString();
     }
     public String toGraphviz(boolean secure) {
         int i = 0; // subgraph_cluster_index
@@ -329,7 +254,7 @@ public class ROSNetwork extends Network<ROSNode, ROSNetworkEntity<? extends ROSC
         return dotGraph.toString();
     }
 
-    private Set<ROSTopic> getTopics() {
+    public Set<ROSTopic> getTopics() {
         Set<ROSTopic> topics = new HashSet<>();
         for (ROSCommunicationChannel channel : getNetworkChannels()) {
             if (channel instanceof ROSTopic) {
@@ -339,7 +264,107 @@ public class ROSNetwork extends Network<ROSNode, ROSNetworkEntity<? extends ROSC
         return topics;
     }
 
-    private Set<ROSServiceChannel> getServices() {
+    public Set<ROSTopicSubscription> getSubscribers() {
+        Set<ROSTopicSubscription> subs = new HashSet<>();
+        for (ROSNetworkEntity rn : getNetworkEntities()) {
+            if (rn instanceof ROSTopicSubscription) {
+                subs.add((ROSTopicSubscription) rn);
+            }
+        }
+        return subs;
+    }
+
+
+    public Set<ROSServiceServer> getServiceServers() {
+        Set<ROSServiceServer> ss = new HashSet<>();
+        for (ROSNetworkEntity rn : getNetworkEntities()) {
+            if (rn instanceof ROSServiceServer) {
+                ss.add((ROSServiceServer) rn);
+            }
+        }
+        return ss;
+    }
+
+    public Set<ROSServiceServer> getSystemServiceServers() {
+        Set<ROSServiceServer> ss = new HashSet<>();
+        for (ROSNetworkEntity rn : getNetworkEntities()) {
+            if (rn instanceof ROSServiceServer && rn.getChannel().isSystem()) {
+                ss.add((ROSServiceServer) rn);
+            }
+        }
+        return ss;
+    }
+
+    public Set<ROSServiceClient> getServiceClients() {
+        Set<ROSServiceClient> sc = new HashSet<>();
+        for (ROSNetworkEntity rn : getNetworkEntities()) {
+            if (rn instanceof ROSServiceClient) {
+                sc.add((ROSServiceClient) rn);
+            }
+        }
+        return sc;
+    }
+
+    public Set<ROSActionServer> getActionServers() {
+        Set<ROSActionServer> as = new HashSet<>();
+        for (ROSNetworkEntity rn : getNetworkEntities()) {
+            if (rn instanceof ROSActionServer) {
+                as.add((ROSActionServer) rn);
+            }
+        }
+        return as;
+    }
+
+
+    public Set<ROSActionClient> getActionClients() {
+        Set<ROSActionClient> ac = new HashSet<>();
+        for (ROSNetworkEntity rn : getNetworkEntities()) {
+            if (rn instanceof ROSActionClient) {
+                ac.add((ROSActionClient) rn);
+            }
+        }
+        return ac;
+    }
+    public Set<ROSTopicPublisher> getPublishers() {
+        Set<ROSTopicPublisher> pubs = new HashSet<>();
+        for (ROSNetworkEntity rn : getNetworkEntities()) {
+            if (rn instanceof ROSTopicPublisher) {
+                pubs.add((ROSTopicPublisher) rn);
+            }
+        }
+        return pubs;
+    }
+
+    public Set<ROSTopicSubscription> getSystemSubscribers() {
+        Set<ROSTopicSubscription> subs = new HashSet<>();
+        for (ROSNetworkEntity rn : getNetworkEntities()) {
+            if (rn instanceof ROSTopicSubscription && rn.getChannel().isSystem()) {
+                subs.add((ROSTopicSubscription) rn);
+            }
+        }
+        return subs;
+    }
+    public Set<ROSTopicPublisher> getSystemPublishers() {
+        Set<ROSTopicPublisher> pubs = new HashSet<>();
+        for (ROSNetworkEntity rn : getNetworkEntities()) {
+            if (rn instanceof ROSTopicPublisher && rn.getChannel().isSystem()) {
+                pubs.add((ROSTopicPublisher) rn);
+            }
+        }
+        return pubs;
+    }
+
+    public Set<ROSTopic> getSystemTopics() {
+        Set<ROSTopic> topics = new HashSet<>();
+        for (ROSCommunicationChannel channel : getNetworkChannels()) {
+            if (channel instanceof ROSTopic && channel.isSystem()) {
+                topics.add((ROSTopic) channel);
+            }
+        }
+        return topics;
+    }
+
+    public Set<ROSServiceChannel> getServices() {
         Set<ROSServiceChannel> services = new HashSet<>();
         for (ROSCommunicationChannel channel : getNetworkChannels()) {
             if (channel instanceof ROSServiceChannel) {
@@ -349,7 +374,17 @@ public class ROSNetwork extends Network<ROSNode, ROSNetworkEntity<? extends ROSC
         return services;
     }
 
-    private Set<ROSActionChannel> getActions() {
+    public Set<ROSServiceChannel> getSystemServices() {
+        Set<ROSServiceChannel> services = new HashSet<>();
+        for (ROSCommunicationChannel channel : getNetworkChannels()) {
+            if (channel instanceof ROSServiceChannel && channel.isSystem()) {
+                services.add((ROSServiceChannel) channel);
+            }
+        }
+        return services;
+    }
+
+    public Set<ROSActionChannel> getActions() {
         Set<ROSActionChannel> services = new HashSet<>();
         for (ROSCommunicationChannel channel : getNetworkChannels()) {
             if (channel instanceof ROSActionChannel) {

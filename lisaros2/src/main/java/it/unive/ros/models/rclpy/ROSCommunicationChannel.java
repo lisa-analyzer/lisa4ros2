@@ -33,4 +33,5 @@ public abstract class ROSCommunicationChannel implements NetworkChannel {
     public Boolean isSystem() {
         return system;
     }
+
 }

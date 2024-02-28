@@ -1,50 +1,30 @@
-<!--<script>
-    mermaid.initialize({ startOnLoad: false,
-        graph: {
-            diagramPadding: 20,
-            //layoutDirection: 'TB',
-            minEntityWidth: 100,
-            minEntityHeight: 75,
-            entityPadding: 15,
-            stroke: 'gray',
-            fill: 'honeydew',
-            fontSize: 45,
-            useMaxWidth: true,
-        },
-    });
-    mermaid.run();
-    console.log(mermaid);
-</script> -->
 <div class="tab-pane active" id="pills-rosanalysis" role="tabpanel" aria-labelledby="pills-rosanalysis-tab" th:fragment="ros-analysis">
     <div class="row">
-        <!--/*<div class="container col-2 sub-menu pt-4 pl-4">
-    <div><a href="#">Computational Graph</a></div>
-    <div><a href="#Nodes">Nodes</a></div>
-    <ul>
-        <th:block th:each="node : ${rosNetwork.getNetworkEntityContainers()}">
-            <li><a th:href="${'#Node-' + node.getName()}">[[${node.getName()}]]</a></li>
-        </th:block>
-
-    </ul>
-</div> */-->
-
         <div class="col-12">
-
-
-
-    <div class="pt-4 pl-4">
+    <div class="pt-4 pl-4  pl-4">
         <div>
             <div><h2>Computational Graph</h2></div>
             <div class="d-flex justify-content-center">
                 <img class="dot-graph" th:src="${svgPath}" />
             </div>
-           <!-- <pre class="mermaid ros-graph" style="{width: 100%;}">
----
-config:
-    useMaxWidth: true
----
-                [[${rosNetwork.toMermaid()}]]
-            </pre>-->
+        </div>
+        <div>
+            <h2>Analysis Results</h2>
+            <ul>
+                <li>Lines of code: [[${loc}]]</li>
+                <li>Nodes: [[${rosNetwork.getNetworkEntityContainers().size()}]]</li>
+                <li>Topics: [[${rosNetwork.getTopics().size()}]], [[${rosNetwork.getSystemTopics().size()}]] of which are systems</li>
+                <li>Services: [[${rosNetwork.getServices().size()}]], [[${rosNetwork.getSystemServices().size()}]] of which are systems</li>
+                <li>Actions: [[${rosNetwork.getActions().size()}]]</li>
+                <li>Publishers: [[${rosNetwork.getPublishers().size()}]], [[${rosNetwork.getSystemPublishers().size()}]] of which are systems</li>
+                <li>Subscriptions: [[${rosNetwork.getSubscribers().size()}]], [[${rosNetwork.getSystemSubscribers().size()}]] of which are systems</li>
+                <li>Publishers: [[${rosNetwork.getPublishers().size()}]], [[${rosNetwork.getSystemPublishers().size()}]] of which are systems</li>
+                <li>Subscriptions: [[${rosNetwork.getSubscribers().size()}]], [[${rosNetwork.getSystemSubscribers().size()}]] of which are systems</li>
+                <li>Service Servers: [[${rosNetwork.getServiceServers().size()}]], [[${rosNetwork.getSystemServiceServers().size()}]] of which are systems</li>
+                <li>Service Clients: [[${rosNetwork.getServiceClients().size()}]]</li>
+                <li>Action Servers: [[${rosNetwork.getActionServers().size()}]]</li>
+                <li>Action Clients: [[${rosNetwork.getActionClients().size()}]]</li>
+            </ul>
         </div>
         <th:block th:switch="${rosNetwork.getWarnings().size()}">
             <th:block th:case="'0'">
@@ -54,7 +34,7 @@ config:
                 <a id="Warnings"></a>
 
                     <h2>Warnings</h2>
-                    <div class="mt-2 ml-4">
+                    <div class="mt-2 ml-4 mr-4">
                         <ul>
                         <th:block th:each="warn : ${rosNetwork.getWarnings()}">
                             <li>[[${warn}]]</li>
@@ -66,9 +46,9 @@ config:
         </th:block>
         <a id="Nodes"></a>
         <h2>Nodes</h2>
-        <div class="mt-2 ml-4">
+        <div class="mt-2 ml-4  mr-4">
             <th:block th:each="node : ${rosNetwork.getNetworkEntityContainers()}">
-                <div class="ml-4">
+                <div class="ml-4  mr-4">
                     <a th:id="${'Node-' + node.getName()}"></a>
                     <div><h3>[[${node.getURI()}]]</h3></div>
                     <div  class="ml-4"><h4>Publishers:</h4>
@@ -98,7 +78,7 @@ config:
                             </th:block>
                         </th:block>
                     </div>
-                    <div class="ml-4"><h4>Subscriptions:</h4>
+                    <div class="ml-4  mr-4"><h4>Subscriptions:</h4>
                         <th:block th:switch="${node.getSubscribersTopics().size()}">
                             <th:block th:case="'0'">
                                     <p>No Subscriptions on this Node</p>
@@ -127,7 +107,7 @@ config:
                             </th:block>
                         </th:block>
                     </div>
-                    <div class="ml-4"><h4>Service Servers:</h4>
+                    <div class="ml-4 mr-4"><h4>Service Servers:</h4>
                         <th:block th:switch="${node.getServiceServers().size()}">
                             <th:block th:case="'0'">
                                 <p>No Service Servers on this Node</p>
@@ -136,7 +116,7 @@ config:
                                 <table class="table table-striped">
                                     <thead>
                                     <tr>
-                                        <th scope="col">Topic Name</th>
+                                        <th scope="col">Service Name</th>
                                         <th scope="col">Service Type</th>
                                         <th scope="col">System</th>
                                         <th scope="col">Location</th>
@@ -154,7 +134,7 @@ config:
                             </th:block>
                         </th:block>
                     </div>
-                    <div class="ml-4"><h4>Service Clients:</h4>
+                    <div class="ml-4  mr-4"><h4>Service Clients:</h4>
                         <th:block th:switch="${node.getServiceClients().size()}">
                             <th:block th:case="'0'">
                                 <p>No Service Clients on this Node</p>
@@ -163,7 +143,7 @@ config:
                                 <table class="table table-striped">
                                     <thead>
                                     <tr>
-                                        <th scope="col">Topic Name</th>
+                                        <th scope="col">Service Name</th>
                                         <th scope="col">Service Type</th>
                                         <th scope="col">System</th>
                                         <th scope="col">Location</th>
@@ -181,7 +161,7 @@ config:
                             </th:block>
                         </th:block>
                     </div>
-                    <div class="ml-4"><h4>Action Clients:</h4>
+                    <div class="ml-4  mr-4"><h4>Action Clients:</h4>
                         <th:block th:switch="${node.getActionClients().size()}">
                             <th:block th:case="'0'">
                                 <p>No Action Clients on this Node</p>
@@ -190,7 +170,7 @@ config:
                                 <table class="table table-striped">
                                     <thead>
                                     <tr>
-                                        <th scope="col">Topic Name</th>
+                                        <th scope="col">Action Name</th>
                                         <th scope="col">Action Type</th>
                                         <th scope="col">System</th>
                                         <th scope="col">Location</th>
@@ -208,7 +188,7 @@ config:
                             </th:block>
                         </th:block>
                     </div>
-                    <div class="ml-4"><h4>Action Servers:</h4>
+                    <div class="ml-4  mr-4"><h4>Action Servers:</h4>
                         <th:block th:switch="${node.getActionServers().size()}">
                             <th:block th:case="'0'">
                                 <p>No Action Servers on this Node</p>
@@ -217,7 +197,7 @@ config:
                                 <table class="table table-striped">
                                     <thead>
                                     <tr>
-                                        <th scope="col">Topic Name</th>
+                                        <th scope="col">Action Name</th>
                                         <th scope="col">Action Type</th>
                                         <th scope="col">System</th>
                                         <th scope="col">Location</th>
@@ -235,7 +215,7 @@ config:
                             </th:block>
                         </th:block>
                     </div>
-                    <div  class="ml-4">
+                    <div  class="ml-4  mr-4">
                         <h4>Generated policy.xml</h4> <a th:href="${'policies/'.concat(node.getName()).concat('/policy.xml')}" download>Download</a>
                         <pre><code class="language-xml">[[${node.dumpPolicy()}]]</code></pre>
                     </div>

@@ -107,6 +107,7 @@ public class ROSApplication {
 		context.setVariable("projectName", "simple_node");
 		context.setVariable("graph", getROSComputationalGraph());
 		context.setVariable("rosNetwork", getRosNetwork());
+		context.setVariable("loc", getLinesOfCode());
 		context.setVariable("svgPath", "graph/graph.svg");
 		context.setVariable("outputFiles", outputFiles);
 		context.setVariable("xmlPermMainFolder", workDir + "/permissions/");

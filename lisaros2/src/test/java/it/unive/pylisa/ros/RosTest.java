@@ -26,40 +26,16 @@ public class RosTest {
 
 	@Test
 	public void test() throws Exception {
-		PyFrontend translator = new PyFrontend(
-				"ros-tests/action.py",
-				false);
-		Program program = translator.toLiSAProgram();
-
-		LiSAConfiguration conf = new LiSAConfiguration();
-		conf.workdir = "ros-test-outputs/1-to-1-procedural-out";
-		conf.serializeResults = true;
-		conf.jsonOutput = true;
-		conf.analysisGraphs = LiSAConfiguration.GraphType.NONE;
-		conf.interproceduralAnalysis = new ContextBasedAnalysis<>();
-		conf.callGraph = new RTACallGraph();
-		conf.openCallPolicy = ReturnTopPolicy.INSTANCE;
-		conf.optimize = false;
-		// conf.openCallPolicy
-		// conf.semanticChecks.add(new ROSComputationGraphDumper(new
-		// RosComputationalGraph()));
-		PyFieldSensitivePointBasedHeap heap = (PyFieldSensitivePointBasedHeap) new PyFieldSensitivePointBasedHeap()
-				.bottom();
-		TypeEnvironment<InferredTypes> type = new TypeEnvironment<>(new InferredTypes());
-		// conf.interproceduralAnalysis = new ContextBasedAnalysis();
-		ValueEnvironment<ConstantPropagation> domain = new ValueEnvironment<>(new ConstantPropagation());
-		conf.semanticChecks.add(new ROSComputationGraphDumper(new RosComputationalGraph(), new ROSNetwork()));
-		conf.abstractState = new SimpleAbstractState<>(heap, domain, type);
-		LiSA lisa = new LiSA(conf);
-		lisa.run(program);
-
 		ROSApplication r = new RosApplicationBuilder()
 				.withNode(
 						new PythonROSNodeBuilder(
-								"ros-tests/action.py"))
-				.withWorkDir("ros-test-outputs/out-test.py").build();
-		r.dumpGraph();
-
+								"ros-tests/test_publish/node01.py"))
+				.withNode(new PythonROSNodeBuilder(
+				"ros-tests/test_publish/node02.py"))
+				.withNode(new PythonROSNodeBuilder(
+				"ros-tests/test_publish/node03.py"))
+				.withWorkDir("ros-test-outputs/simple_node/one_publisher_one_service_rclpy").build();
+		r.dumpResults();
 	}
 
 	@Test

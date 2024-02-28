@@ -8,4 +8,8 @@ public class ROSActionChannel extends ROSCommunicationChannel{
     public ROSActionChannel(String ID, boolean avoidRosNamespaceConventions) {
         super(ID, false, avoidRosNamespaceConventions);
     }
+
+    public int hashCode() {
+        return getID().hashCode() + isSystem().hashCode();
+    }
 }
