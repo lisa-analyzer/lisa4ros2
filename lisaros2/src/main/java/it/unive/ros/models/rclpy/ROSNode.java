@@ -401,7 +401,7 @@ public class ROSNode implements NetworkEntityContainer<ROSNetworkEntity<? extend
 			profile.getTopicsOrServicesOrActions().add(actions);
 		}
 		// add ACTION clients
-		if (!this.getActionServers().isEmpty() ) {
+		if (!this.getActionClients().isEmpty() ) {
 			it.unive.ros.sros2policies.jaxb.ActionsExpressionList actions = new it.unive.ros.sros2policies.jaxb.ActionsExpressionList();
 			actions.setCall(RuleQualifier.ALLOW);
 			for (ROSActionClient a : this.getActionClients()) {
