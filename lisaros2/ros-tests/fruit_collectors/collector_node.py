@@ -11,12 +11,11 @@ from custom_interfaces.srv import Registration
 class CollectorNode(Node):
 
   def __init__(self, id, fruit, speed):
-    self.x = 10
     super().__init__('collector_node')
     self.callback_group = ReentrantCallbackGroup()
 
-    #self.id, self.fruit, self.speed = id, fruit, speed
-    #self.x, self.y = 0, 0
+    self.id, self.fruit, self.speed = id, fruit, speed
+    self.x, self.y = 0, 0
 
 
     # Publishes on 'finish'
@@ -99,7 +98,6 @@ def main(args=None):
   id = sys.argv[1]
   fruit = sys.argv[2]
   speed = 50 if len(sys.argv) < 4 else sys.argv[3]
-  
   collector = CollectorNode(int(id), fruit, int(speed))
 
   executor = MultiThreadedExecutor()

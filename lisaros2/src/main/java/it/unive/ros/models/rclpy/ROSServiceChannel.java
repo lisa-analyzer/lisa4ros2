@@ -32,4 +32,25 @@ public class ROSServiceChannel extends ROSCommunicationChannel{
     public int hashCode() {
         return getID().hashCode() + isSystem().hashCode();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (obj.getClass() != this.getClass()) {
+            return false;
+        }
+
+        final ROSServiceChannel other = (ROSServiceChannel) obj;
+        if (!this.getID().equals(other.getID())) {
+            return false;
+        }
+
+        if (!this.getDDSPrefix().equals(other.getDDSPrefix())) {
+            return false;
+        }
+        return true;
+    }
 }
