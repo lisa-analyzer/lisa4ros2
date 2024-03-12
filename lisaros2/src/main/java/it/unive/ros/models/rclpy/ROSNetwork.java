@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public class ROSNetwork extends Network<ROSNode, ROSNetworkEntity<? extends ROSCommunicationChannel>, ROSCommunicationChannel> {
 
@@ -105,22 +107,29 @@ public class ROSNetwork extends Network<ROSNode, ROSNetworkEntity<? extends ROSC
         return null;
     }
     public String toGraphviz(boolean secure) {
+
+        Function<String, String> format = (s) ->
+                s.replace("\"", "\\\"")
+                        .replace("[", "\\[")
+                        .replace("]", "\\]")
+                        .replace("{", "\\{")
+                        .replace("}", "\\}");
         int i = 0; // subgraph_cluster_index
 
         StringBuilder dotGraph = new StringBuilder(
                 "digraph rosgraph {graph [pad=\"1\", nodesep=\"2\", rankdir=\"BT\", ranksep=\"2\"];");
         // Nodes
         for (ROSNode n : getNetworkEntityContainers()) {
-            dotGraph.append("\"").append(n.getURI()).append("\"").append("[style=filled,fillcolor=\"limegreen\"];");
+            dotGraph.append("\"").append(format.apply(n.getURI())).append("\"").append("[style=filled,fillcolor=\"limegreen\"];");
         }
 
         // Topic
         for (ROSTopic t : this.getTopics()) {
             if (!t.isSystem()) {
                 if (this.getChannelUserContainers(t).isEmpty()) {
-                    dotGraph.append("\"").append(t.getID()).append("\"").append("[shape=box,style=filled,fillcolor=\"gold\"];");
+                    dotGraph.append("\"").append(format.apply(t.getID())).append("\"").append("[shape=box,style=filled,fillcolor=\"gold\"];");
                 } else {
-                    dotGraph.append("\"").append(t.getID()).append("\"").append("[shape=box,style=filled,fillcolor=\"gold\"];");
+                    dotGraph.append("\"").append(format.apply(t.getID())).append("\"").append("[shape=box,style=filled,fillcolor=\"gold\"];");
                 }
             }
         }
@@ -134,7 +143,7 @@ public class ROSNetwork extends Network<ROSNode, ROSNetworkEntity<? extends ROSC
                 }*/
                 dotGraph.append("subgraph cluster_" + i)
                         .append(" { style=filled;fillcolor=\"lightskyblue\";penwidth=2;label=\"")
-                        .append(s.getName())
+                        .append(format.apply(s.getName()))
                         .append("\";");
                 i+= 1;
                 for (NetworkEntity n : this.getNetworkEntities()) {
@@ -144,7 +153,7 @@ public class ROSNetwork extends Network<ROSNode, ROSNetworkEntity<? extends ROSC
                             Set<ROSTopicBasedNetworkEntity> topics = service.toTopicEntities();
                             for (ROSTopicBasedNetworkEntity t : topics) {
                                 dotGraph.append("\"")
-                                        .append(t.getChannel().getID())
+                                        .append(format.apply(t.getChannel().getID()))
                                         .append("\"")
                                         .append("[shape=box,style=filled,fillcolor=\"gold\"];");
                                 topicNames.add(t.getChannel().getID());
@@ -167,7 +176,7 @@ public class ROSNetwork extends Network<ROSNode, ROSNetworkEntity<? extends ROSC
                 }*/
                 dotGraph.append("subgraph cluster_" + i)
                         .append(" { style=filled;fillcolor=\"orchid1\";penwidth=2;label=\"")
-                        .append(s.getName())
+                        .append(format.apply(s.getName()))
                         .append("\";");
                 i += 1;
                 for (NetworkEntity n : this.getNetworkEntities()) {
@@ -177,7 +186,7 @@ public class ROSNetwork extends Network<ROSNode, ROSNetworkEntity<? extends ROSC
                             Set<ROSTopicBasedNetworkEntity> topics = action.toTopicEntities();
                             for (ROSTopicBasedNetworkEntity t : topics) {
                                 dotGraph.append("\"")
-                                        .append(t.getChannel().getID())
+                                        .append(format.apply(t.getChannel().getID()))
                                         .append("\"")
                                         .append("[shape=box,style=filled,fillcolor=\"gold\"];");
                                 topicNames.add(t.getChannel().getID());
@@ -193,22 +202,22 @@ public class ROSNetwork extends Network<ROSNode, ROSNetworkEntity<? extends ROSC
         for (ROSNode n : getNetworkEntityContainers()) {
             for (ROSTopicPublisher p : n.getPublishers()) {
                 if (!p.getChannel().isSystem()) {
-                    dotGraph.append("\"").append(n.getURI()).append("\"").append(" -> ").append("\"").append(p.getChannel().getID()).append("\"");
+                    dotGraph.append("\"").append(format.apply(n.getURI())).append("\"").append(" -> ").append("\"").append(format.apply(p.getChannel().getID())).append("\"");
                 }
             }
             for (ROSTopicSubscription s : n.getSubscribers()) {
                 if (!s.getChannel().isSystem()) {
-                    dotGraph.append("\"").append(s.getChannel().getID()).append("\"").append(" -> ").append("\"").append(n.getURI()).append("\"");
+                    dotGraph.append("\"").append(format.apply(s.getChannel().getID())).append("\"").append(" -> ").append("\"").append(format.apply(n.getURI())).append("\"");
                 }
                 }
             for (ROSServiceServer ss : n.getServiceServers()) {
                 if (!ss.getChannel().isSystem()) {
                     for (ROSTopicBasedNetworkEntity t : ss.toTopicEntities()) {
                         if (t instanceof ROSTopicPublisher) {
-                            dotGraph.append("\"").append(n.getURI()).append("\"").append(" -> ").append("\"").append(t.getChannel().getID()).append("\"");
+                            dotGraph.append("\"").append(format.apply(n.getURI())).append("\"").append(" -> ").append("\"").append(format.apply(t.getChannel().getID())).append("\"");
                         } else {
                             // is a Subscription
-                            dotGraph.append("\"").append(t.getChannel().getID()).append("\"").append(" -> ").append("\"").append(n.getURI()).append("\"");
+                            dotGraph.append("\"").append(format.apply(t.getChannel().getID())).append("\"").append(" -> ").append("\"").append(format.apply(n.getURI())).append("\"");
                         }
                     }
                 }
@@ -217,10 +226,10 @@ public class ROSNetwork extends Network<ROSNode, ROSNetworkEntity<? extends ROSC
                 if (!sc.getChannel().isSystem()) {
                     for (ROSTopicBasedNetworkEntity t : sc.toTopicEntities()) {
                         if (t instanceof ROSTopicPublisher) {
-                            dotGraph.append("\"").append(n.getURI()).append("\"").append(" -> ").append("\"").append(t.getChannel().getID()).append("\"");
+                            dotGraph.append("\"").append(format.apply(n.getURI())).append("\"").append(" -> ").append("\"").append(format.apply(t.getChannel().getID())).append("\"");
                         } else {
                             // is a Subscription
-                            dotGraph.append("\"").append(t.getChannel().getID()).append("\"").append(" -> ").append("\"").append(n.getURI()).append("\"");
+                            dotGraph.append("\"").append(format.apply(t.getChannel().getID())).append("\"").append(" -> ").append("\"").append(format.apply(n.getURI())).append("\"");
                         }
                     }
                 }
@@ -229,10 +238,10 @@ public class ROSNetwork extends Network<ROSNode, ROSNetworkEntity<? extends ROSC
                 if (!as.getChannel().isSystem()) {
                     for (ROSTopicBasedNetworkEntity t : as.toTopicEntities()) {
                         if (t instanceof ROSTopicPublisher) {
-                            dotGraph.append("\"").append(n.getURI()).append("\"").append(" -> ").append("\"").append(t.getChannel().getID()).append("\"");
+                            dotGraph.append("\"").append(format.apply(n.getURI())).append("\"").append(" -> ").append("\"").append(format.apply(t.getChannel().getID())).append("\"");
                         } else {
                             // is a Subscription
-                            dotGraph.append("\"").append(t.getChannel().getID()).append("\"").append(" -> ").append("\"").append(n.getURI()).append("\"");
+                            dotGraph.append("\"").append(format.apply(t.getChannel().getID())).append("\"").append(" -> ").append("\"").append(format.apply(n.getURI())).append("\"");
                         }
                     }
                 }
@@ -241,10 +250,10 @@ public class ROSNetwork extends Network<ROSNode, ROSNetworkEntity<? extends ROSC
                 if (!ac.getChannel().isSystem()) {
                     for (ROSTopicBasedNetworkEntity t : ac.toTopicEntities()) {
                         if (t instanceof ROSTopicPublisher) {
-                            dotGraph.append("\"").append(n.getURI()).append("\"").append(" -> ").append("\"").append(t.getChannel().getID()).append("\"");
+                            dotGraph.append("\"").append(format.apply(n.getURI())).append("\"").append(" -> ").append("\"").append(format.apply(t.getChannel().getID())).append("\"");
                         } else {
                             // is a Subscription
-                            dotGraph.append("\"").append(t.getChannel().getID()).append("\"").append(" -> ").append("\"").append(n.getURI()).append("\"");
+                            dotGraph.append("\"").append(format.apply(t.getChannel().getID())).append("\"").append(" -> ").append("\"").append(format.apply(n.getURI())).append("\"");
                         }
                     }
                 }
