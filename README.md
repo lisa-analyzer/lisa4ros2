@@ -1,10 +1,8 @@
-# lisa4ros2
+# LiSA4ROS2
 
 Static Analysis of ROS2
-
-## Build
-### Warning
-Sometimes, lisa4ros2 will refer to a snapshot release of LiSA to exploit unreleased features. If, when building, you get the following error message:
+## ⚠︎⚠︎⚠︎ Warning ⚠︎⚠︎⚠︎
+Sometimes, LiSA4ROS2 will refer to a snapshot release of LiSA to exploit unreleased features. If, when building, you get the following error message:
 
 ```
 > Could not resolve io.github.lisa-analyzer:lisa-project:ver-SNAPSHOT.
@@ -19,6 +17,8 @@ Then you have to perform the following:
 gpr.user=your-github-username
 gpr.key=github-access-token
 ```
+## Build
+
 ### Build Using Docker
 ```
 git clone git@github.com:lisa-analyzer/lisa4ros2.git # clone the repository
