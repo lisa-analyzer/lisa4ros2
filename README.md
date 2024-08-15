@@ -22,7 +22,7 @@ gpr.key=github-access-token
 ### Build Using Docker
 ```
 git clone git@github.com:lisa-analyzer/lisa4ros2.git # clone the repository
-cs lisa4ros2 # move to the main folder of the project (where the Dockerfile is located)
+cd lisa4ros2 # move to the main folder of the project (where the Dockerfile is located)
 docker build  -t lisa4ros2 . # build the image
 # Crete a folder outside the project (for example, lisa-workdir):
 cd ..

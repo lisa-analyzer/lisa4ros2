@@ -27,9 +27,9 @@ mainClassName = 'it.unive.lisa4ros2.Main'
 tasks.withType(Javadoc).configureEach { enabled = false }
 tasks.withType(Test).configureEach { enabled = true }
 dependencies {
-    implementation 'io.github.lisa-analyzer:lisa-sdk:0.1b10-SNAPSHOT'
-    implementation 'io.github.lisa-analyzer:lisa-program:0.1b10-SNAPSHOT'
-    implementation 'io.github.lisa-analyzer:lisa-analyses:0.1b10-SNAPSHOT'
+    implementation 'io.github.lisa-analyzer:lisa-sdk:0.2-lisa4ros2-SNAPSHOT'
+    implementation 'io.github.lisa-analyzer:lisa-program:0.2-lisa4ros2-SNAPSHOT'
+    implementation 'io.github.lisa-analyzer:lisa-analyses:0.2-lisa4ros2-SNAPSHOT'
     implementation group: 'org.jdom', name: 'jdom2', version: '2.0.5'
     implementation group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '3.0.2'
     implementation 'org.thymeleaf:thymeleaf:3.0.15.RELEASE'
